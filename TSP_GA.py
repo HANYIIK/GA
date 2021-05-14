@@ -35,7 +35,7 @@ class TSP(object):
         :: 用法: self.cities = []
                 self.initCities()
         """
-        with open('../data/china.csv', 'r') as f:
+        with open('data/china.csv', 'r') as f:
             reader = csv.reader(f)
             for row in reader:
                 name, longitude, latitude = row[0].split(';')

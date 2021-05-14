@@ -4,10 +4,8 @@
 # @Author   : Hanyiik
 # @File     : TSP_GA_w.py
 # @Function : 用 GA 解决 TSP 问题的可视化版
-
-import random
+import pdb
 import math
-import sys
 from GA import GA
 import tkinter as Tkinter
 
