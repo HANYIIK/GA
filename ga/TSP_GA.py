@@ -7,8 +7,8 @@
 import pdb
 import random
 import math
-from GA import GA
 import csv
+from GA import GA
 
 
 class City(object):
