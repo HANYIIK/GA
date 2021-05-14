@@ -6,18 +6,28 @@
 # @Function : 遗传算法类 GA
 
 import random
-from Life import Life
+
+
+class Life(object):
+      def __init__(self, aGene = None):
+            """
+            :: 功能: 初始化一个种群中的个体
+            :: 输入: aGene - 一个个体的基因，如 TSP 问题的基因就是随机排列整数的 list - e.g. [0, 22, 23, 7, 1, 21, 13, 29, 28, 16, 18, 12, 15, 9, 2, 20, 30, 17, 31, 24, 26, 27, 19, 3, 5, 4, 10, 8, 25, 32, 33, 6, 11, 14]
+            :: 输出: 一个含有基因序列与初始化分数为 -1 的个体
+            :: 用法: life = Life(aGene = xxx)
+            """
+            self.gene = aGene
+            self.score = -1
 
 
 class GA(object):
-
     def __init__(self, aCrossRate, aMutationRage, aLifeCount, aGeneLength, aMatchFun = lambda life : 1):
-        self.crossRate = aCrossRate             # 交叉率
-        self.mutationRate = aMutationRage       # 变异率
-        self.lifeCount = aLifeCount             # 种群中的个体数量
-        self.geneLength = aGeneLength           # 基因长度
-        self.matchFun = aMatchFun               # 适配函数
-        self.lives = []                         # 种群
+        self.crossRate = aCrossRate             # 交叉率 0.7
+        self.mutationRate = aMutationRage       # 变异率 0.3
+        self.lifeCount = aLifeCount             # 种群中的个体数量 100
+        self.geneLength = aGeneLength           # 基因长度 34
+        self.matchFun = aMatchFun               # 适配函数 1.0 / distance
+        self.lives = []                         # 由 self.lifeCount 个个体所组成的种群 list
         self.best = None                        # 保存这一代中最好的个体
 
         self.generation = 1                     # 第几代
@@ -25,22 +35,21 @@ class GA(object):
         self.mutationCount = 0                  # 统计: 变异了几次？
         self.bounds = 0.0                       # 适配值之和，用于选择是计算概率
 
-        self.initPopulation()
+        self.initPopulation()                   # 随机初始化 self.lives 里的 Life
 
 
     def initPopulation(self):
         """
         :: 功能: 种群初始化
-        :: 输入: self -
-        :: 输出:
-        :: 用法:
+        :: 输入: NULL
+        :: 输出: self.lives 由随机初始化基因的 Life 组成
+        :: 用法: self.initPopulation()
         """
         self.lives = []
         for i in range(self.lifeCount):
-            gene = [x for x in range(self.geneLength)]
+            gene = [x for x in range(self.geneLength)]      # 34 个城市，所以 geneLength = 34
             random.shuffle(gene)
-            life = Life(gene)
-            self.lives.append(life)
+            self.lives.append(Life(gene))
 
 
     def judge(self):

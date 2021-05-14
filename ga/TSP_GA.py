@@ -4,76 +4,60 @@
 # @Author   : Hanyiik
 # @File     : TSP_GA.py
 # @Function : 用 GA 解决 TSP 问题
-
+import pdb
 import random
 import math
 from GA import GA
+import csv
+
+
+class City(object):
+    def __init__(self, aName, aPos):
+        self.name = aName
+        self.pos = aPos
 
 
 class TSP(object):
-    def __init__(self, aLifeCount=100):
+    def __init__(self, aCrossRate, aMutationRage, aLifeCount):
         self.cities = []
         self.initCities()
-        self.lifeCount = aLifeCount
-        self.ga = GA(aCrossRate=0.7,
-                     aMutationRage=0.3,
-                     aLifeCount=self.lifeCount,
-                     aGeneLength=len(self.cities),
-                     aMatchFun=self.matchFun())
+        self.ga = GA(aCrossRate=aCrossRate,                                     # 交叉率
+                     aMutationRage=aMutationRage,                               # 变异率
+                     aLifeCount=aLifeCount,                                     # 一个种群中的个体数
+                     aGeneLength=len(self.cities),                              # 基因长度 = 城市数量 = 34
+                     aMatchFun=lambda life: 1.0 / self.distance(life.gene))     # 距离越长，适应度越低
 
     def initCities(self):
         """
-        for i in range(34):
-              x = random.randint(0, 1000)
-              y = random.randint(0, 1000)
-              self.cities.append((x, y))
+        :: 功能: 初始化中国 34 个城市的 [名称] + [经纬度]
+        :: 输入: NULL
+        :: 输出: 由 34 个 City 类组成的 self.cities(由 .csv 文件所确定)
+        :: 用法: self.cities = []
+                self.initCities()
         """
-        # 中国34城市经纬度
-        self.cities.append((116.46, 39.92))
-        self.cities.append((117.2, 39.13))
-        self.cities.append((121.48, 31.22))
-        self.cities.append((106.54, 29.59))
-        self.cities.append((91.11, 29.97))
-        self.cities.append((87.68, 43.77))
-        self.cities.append((106.27, 38.47))
-        self.cities.append((111.65, 40.82))
-        self.cities.append((108.33, 22.84))
-        self.cities.append((126.63, 45.75))
-        self.cities.append((125.35, 43.88))
-        self.cities.append((123.38, 41.8))
-        self.cities.append((114.48, 38.03))
-        self.cities.append((112.53, 37.87))
-        self.cities.append((101.74, 36.56))
-        self.cities.append((117, 36.65))
-        self.cities.append((113.6, 34.76))
-        self.cities.append((118.78, 32.04))
-        self.cities.append((117.27, 31.86))
-        self.cities.append((120.19, 30.26))
-        self.cities.append((119.3, 26.08))
-        self.cities.append((115.89, 28.68))
-        self.cities.append((113, 28.21))
-        self.cities.append((114.31, 30.52))
-        self.cities.append((113.23, 23.16))
-        self.cities.append((121.5, 25.05))
-        self.cities.append((110.35, 20.02))
-        self.cities.append((103.73, 36.03))
-        self.cities.append((108.95, 34.27))
-        self.cities.append((104.06, 30.67))
-        self.cities.append((106.71, 26.57))
-        self.cities.append((102.73, 25.04))
-        self.cities.append((114.1, 22.2))
-        self.cities.append((113.33, 22.13))
+        with open('../data/china.csv', 'r') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                name, longitude, latitude = row[0].split(';')
+                pos = (float(longitude), float(latitude))
+                self.cities.append(City(name, pos))
 
     def distance(self, order):
+        """
+        :: 功能: 计算城市排序的总距离
+        :: 输入: order - 一个个体的基因，即城市排列顺序
+        :: 输出: 总距离
+        :: 用法: distance = self.distance(life.gene)
+        """
         distance = 0.0
         for i in range(-1, len(self.cities) - 1):
             index1, index2 = order[i], order[i + 1]
-            city1, city2 = self.cities[index1], self.cities[index2]
-            distance += math.sqrt((city1[0] - city2[0]) ** 2 + (city1[1] - city2[1]) ** 2)
+            city1, city2 = self.cities[index1].pos, self.cities[index2].pos
 
-            """
+            # distance += math.sqrt((city1[0] - city2[0]) ** 2 + (city1[1] - city2[1]) ** 2)
+
             R = 6371.004
-            Pi = math.pi 
+            Pi = math.pi
             LatA = city1[1]
             LatB = city2[1]
             MLonA = city1[0]
@@ -82,24 +66,17 @@ class TSP(object):
             C = math.sin(LatA*Pi / 180) * math.sin(LatB * Pi / 180) + math.cos(LatA * Pi / 180) * math.cos(LatB * Pi / 180) * math.cos((MLonA - MLonB) * Pi / 180)
             D = R * math.acos(C) * Pi / 100
             distance += D
-            """
+
         return distance
 
-    def matchFun(self):
-        return lambda life: 1.0 / self.distance(life.gene)
-
-    def run(self, n=0):
-        while n > 0:
-            self.ga.next()
+    def run(self, Gen=0):
+        while Gen > 1:
+            self.ga.next()      # 产生下一代
             distance = self.distance(self.ga.best.gene)
-            print("%d : %f" % (self.ga.generation, distance))
-            n -= 1
-
-
-def main():
-    tsp = TSP()
-    tsp.run(10000)
+            print("%d : %f" % (self.ga.generation, distance))   # 把这一代最好的个体的总距离 print 出来
+            Gen -= 1
 
 
 if __name__ == '__main__':
-    main()
+    tsp = TSP(aCrossRate=0.9, aMutationRage=0.3, aLifeCount=200)
+    tsp.run(Gen=10000)
