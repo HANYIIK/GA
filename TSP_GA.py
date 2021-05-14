@@ -73,10 +73,15 @@ class TSP(object):
         while Gen > 1:
             self.ga.next()      # 产生下一代
             distance = self.distance(self.ga.best.gene)
-            print("%d : %f" % (self.ga.generation, distance))   # 把这一代最好的个体的总距离 print 出来
+            print("第 %d 代的总距离：%f" % (self.ga.generation, distance))   # 把这一代最好的个体的总距离 print 出来
             Gen -= 1
+
+        # 把最终路线的城市名输出出来
+        for index in self.ga.best.gene:
+            print(self.cities[index].name, end=' ')
+        print('\n')
 
 
 if __name__ == '__main__':
-    tsp = TSP(aCrossRate=0.9, aMutationRage=0.3, aLifeCount=200)
-    tsp.run(Gen=10000)
+    tsp = TSP(aCrossRate=0.9, aMutationRage=0.3, aLifeCount=200)    # 种群中的个体数为 200 个
+    tsp.run(Gen=10000)      # 跑它个 10000 代
