@@ -4,7 +4,7 @@
 # @Author   : Hanyiik
 # @File     : GA.py
 # @Function : 遗传算法类 GA
-
+import pdb
 import random
 
 
