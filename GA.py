@@ -86,7 +86,6 @@ class GA(object):
             r -= life.score
             if r <= 0:
                 return life
-
         raise Exception("选择错误", self.bounds)
 
     def cross(self, parent1, parent2):

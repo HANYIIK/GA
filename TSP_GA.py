@@ -63,17 +63,17 @@ class TSP(object):
             MLonA = city1[0]
             MLonB = city2[0]
 
-            C = math.sin(LatA*Pi / 180) * math.sin(LatB * Pi / 180) + math.cos(LatA * Pi / 180) * math.cos(LatB * Pi / 180) * math.cos((MLonA - MLonB) * Pi / 180)
+            C = math.sin(LatA*Pi / 180) * math.sin(LatB * Pi / 180) + \
+                math.cos(LatA * Pi / 180) * math.cos(LatB * Pi / 180) * math.cos((MLonA - MLonB) * Pi / 180)
             D = R * math.acos(C) * Pi / 100
             distance += D
-
         return distance
 
     def run(self, Gen=0):
         while Gen > 1:
             self.ga.next()      # 产生下一代
             distance = self.distance(self.ga.best.gene)
-            print("第 %d 代的总距离：%f" % (self.ga.generation, distance))   # 把这一代最好的个体的总距离 print 出来
+            print("第 %d 代的总距离：%f" % (self.ga.generation, distance))     # 把这一代最好的个体的总距离 print 出来
             Gen -= 1
 
         # 把最终路线的城市名输出出来
